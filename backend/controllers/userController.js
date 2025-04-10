@@ -44,6 +44,35 @@ class UserController {
             res.status(400).json({error: err})
         }
     }
+
+    async updateUser(req,res){
+        try{
+            const id = req.params.id
+            const { firstName, lastName, address, birthDate, phone, national_id } = req.body;
+
+            const newUser = {
+                firstName,
+                lastName,
+                address: {
+                    street: address.street,
+                    city: address.city,
+                    state: address.state,
+                    postalCode: address.postalCode,
+                    country: address.country
+                },
+                birthDate,
+                phone,
+                national_id
+            }
+
+            const newUserData = await userModel.findByIdAndUpdate(id,newUser,{new:true})
+
+            res.status(200).json(newUserData)
+        }catch(err){
+            console.log(`Error updating user: ${err}`)
+            res.status(400).json({error: err})
+        }
+    }
 }
 
 

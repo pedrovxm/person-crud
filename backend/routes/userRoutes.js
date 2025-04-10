@@ -7,6 +7,7 @@ const userRoutes = Router()
 
 userRoutes.post("/user",userController.createUser)
 userRoutes.get("/users",userController.getUsers)
+userRoutes.put("/user/:id",userController.updateUser)
 
 
 export {userRoutes}
