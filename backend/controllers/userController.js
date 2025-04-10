@@ -73,6 +73,20 @@ class UserController {
             res.status(400).json({error: err})
         }
     }
+
+
+    async deleteUser(req,res){
+        try{
+
+            const id = req.params.id
+            const user = await userModel.findByIdAndDelete(id)
+
+            res.status(200).json(user)
+        }catch(err){
+            console.log(`Error deleting user : ${err}`)
+            res.status(400).json({error: err})
+        }
+    }
 }
 
 
