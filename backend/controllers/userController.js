@@ -33,6 +33,17 @@ class UserController {
         }
 
     }
+
+    async getUsers(req,res){
+        try{
+            const allUsers = await userModel.find({})
+
+            res.status(200).json(allUsers)
+        }catch(err){
+            console.log(`Error getting users : ${err}`)
+            res.status(400).json({error: err})
+        }
+    }
 }
 
 

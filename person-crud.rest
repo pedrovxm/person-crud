@@ -16,3 +16,7 @@ Content-Type: application/json
   "phone": "+1 (123) 456-7890",
   "national_id": "12345678901"
 }
+
+
+###GET
+GET http://localhost:3001/users
