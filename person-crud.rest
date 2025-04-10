@@ -1,0 +1,18 @@
+###POST my First POST
+POST http://localhost:3001/user
+Content-Type: application/json
+
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "address": {
+    "street": "123 Main St",
+    "city": "Anytown",
+    "state": "NY",
+    "postalCode": "12345",
+    "country": "USA"
+  },
+  "birthDate": "1990-01-01T00:00:00.000Z",
+  "phone": "+1 (123) 456-7890",
+  "national_id": "12345678901"
+}
