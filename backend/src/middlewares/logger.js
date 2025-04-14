@@ -1,4 +1,6 @@
-function logger(req,res,next){
+import { logModel } from "../models/logModel.js"
+
+async function logger(req,res,next){
     req.timestamp = Date.now()
 
     res.on("finish",async()=>{
@@ -19,7 +21,9 @@ function logger(req,res,next){
 			query: req.query,
 		};
 
-        console.log(logInput)
+        const newLog = new logModel(logInput)
+
+        await newLog.save()
     })
 
     next()
