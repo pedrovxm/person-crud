@@ -129,7 +129,6 @@ describe('User API', () => {
     expect(res.body._id).toBe(user._id.toString());
   });
 
-  // Testes adicionais de robustez:
 
   it('should not create user with missing required fields', async () => {
     const userData = {

@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "node ./src/server.js",
     "dev": "node ./src/server.js",
     "test": "node --experimental-vm-modules ./node_modules/.bin/jest --runInBand"
   },
@@ -20,6 +21,7 @@
   "type": "module",
   "homepage": "https://github.com/pedrovxm/person-crud#readme",
   "dependencies": {
+    "amqplib": "^0.10.7",
     "dotenv": "^16.4.7",
     "express": "^5.1.0",
     "mongoose": "^8.13.2"

@@ -1,4 +1,6 @@
+import { config } from "../config/config.js"
 import { logModel } from "../models/logModel.js"
+import { sendToQueue } from "../services/producer.js"
 
 async function logger(req,res,next){
     req.timestamp = Date.now()
@@ -20,10 +22,9 @@ async function logger(req,res,next){
 			params: req.params,
 			query: req.query,
 		};
-
-        const newLog = new logModel(logInput)
-
-        await newLog.save()
+        
+        sendToQueue(config.rabbit_mq_queue,logInput)
+        
     })
 
     next()
