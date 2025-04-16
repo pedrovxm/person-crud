@@ -1,31 +1,46 @@
-// src/tests/user.test.js
-import request from 'supertest';
-import mongoose from 'mongoose';
-import { MongoMemoryServer } from 'mongodb-memory-server';
-import app from '../app.js';
-import { userModel } from '../models/userModel.js';
+import request from 'supertest'
+import mongoose from 'mongoose'
+import { MongoMemoryServer } from 'mongodb-memory-server'
+import { config } from "../config/config.js"
 
-let mongoServer;
+let mongoServer
+let token
+let app
+let userModel
 
 beforeAll(async () => {
-  mongoServer = await MongoMemoryServer.create();
-  const uri = mongoServer.getUri();
+  /*mongoServer = await MongoMemoryServer.create()
+  const uri = mongoServer.getUri()
 
   await mongoose.connect(uri, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-  });
-});
+  })
+
+  await mongoose.connection.asPromise()
+  */
+
+  app = (await import('../app.js')).default
+  userModel = (await import('../models/userModel.js')).userModel
+
+  const response = await request(app)
+    .post('/auth/validate')
+    .send({ apiKey: config.apiKey })
+
+  token = response.body.token
+})
+
+/*
 
 afterAll(async () => {
-  await mongoose.connection.dropDatabase();
-  await mongoose.connection.close();
-  await mongoServer.stop();
-});
+  await mongoose.connection.dropDatabase()
+  await mongoose.connection.close()
+  await mongoServer.stop()
+})*/
 
 beforeEach(async () => {
-  await userModel.deleteMany();
-});
+  await userModel.deleteMany()
+})
 
 describe('User API', () => {
   it('should create a user', async () => {
@@ -42,13 +57,13 @@ describe('User API', () => {
       birthDate: "1990-01-01",
       phone: "11999999999",
       national_id: "12345678900"
-    };
+    }
 
-    const res = await request(app).post('/users').send(userData);
-    expect(res.statusCode).toBe(200);
-    expect(res.body.newUser).toHaveProperty('_id');
-    expect(res.body.newUser.firstName).toBe('João');
-  });
+    const res = await request(app).post('/users').set('token', token).send(userData)
+    expect(res.statusCode).toBe(200)
+    expect(res.body.newUser).toHaveProperty('_id')
+    expect(res.body.newUser.firstName).toBe('João')
+  })
 
   it('should return all users', async () => {
     await userModel.create({
@@ -64,13 +79,13 @@ describe('User API', () => {
       birthDate: "1991-01-01",
       phone: "11988888888",
       national_id: "98765432100"
-    });
+    })
 
-    const res = await request(app).get('/users');
-    expect(res.statusCode).toBe(200);
-    expect(Array.isArray(res.body)).toBe(true);
-    expect(res.body.length).toBeGreaterThan(0);
-  });
+    const res = await request(app).get('/users')
+    expect(res.statusCode).toBe(200)
+    expect(Array.isArray(res.body)).toBe(true)
+    expect(res.body.length).toBeGreaterThan(0)
+  })
 
   it('should update a user', async () => {
     const user = await userModel.create({
@@ -86,7 +101,7 @@ describe('User API', () => {
       birthDate: "1992-01-01",
       phone: "2223334444",
       national_id: "33355577700"
-    });
+    })
 
     const updatedData = {
       firstName: "Ana Paula",
@@ -101,12 +116,12 @@ describe('User API', () => {
       birthDate: "1992-01-01",
       phone: "2223334444",
       national_id: "33355577700"
-    };
+    }
 
-    const res = await request(app).put(`/users/${user._id}`).send(updatedData);
-    expect(res.statusCode).toBe(200);
-    expect(res.body.firstName).toBe("Ana Paula");
-  });
+    const res = await request(app).put(`/users/${user._id}`).send(updatedData)
+    expect(res.statusCode).toBe(200)
+    expect(res.body.firstName).toBe("Ana Paula")
+  })
 
   it('should delete a user', async () => {
     const user = await userModel.create({
@@ -122,12 +137,12 @@ describe('User API', () => {
       birthDate: "1985-01-01",
       phone: "3334445555",
       national_id: "44466688800"
-    });
+    })
 
-    const res = await request(app).delete(`/users/${user._id}`);
-    expect(res.statusCode).toBe(200);
-    expect(res.body._id).toBe(user._id.toString());
-  });
+    const res = await request(app).delete(`/users/${user._id}`)
+    expect(res.statusCode).toBe(200)
+    expect(res.body._id).toBe(user._id.toString())
+  })
 
 
   it('should not create user with missing required fields', async () => {
@@ -144,22 +159,22 @@ describe('User API', () => {
       birthDate: "1990-01-01",
       phone: "11999999999",
       national_id: "12345678900"
-    };
+    }
 
-    const res = await request(app).post('/users').send(userData);
-    expect(res.statusCode).toBe(400);
-    expect(res.body.message).toBeDefined();
-  });
+    const res = await request(app).post('/users').send(userData)
+    expect(res.statusCode).toBe(400)
+    expect(res.body.message).toBeDefined()
+  })
 
   it('should return 404 when deleting a user that does not exist', async () => {
-    const fakeId = new mongoose.Types.ObjectId();
-    const res = await request(app).delete(`/users/${fakeId}`);
+    const fakeId = new mongoose.Types.ObjectId()
+    const res = await request(app).delete(`/users/${fakeId}`)
     expect(res.statusCode).toBe(200)
     expect(res.body).toBeNull()
-  });
+  })
 
   it('should return 404 when updating a user that does not exist', async () => {
-    const fakeId = new mongoose.Types.ObjectId();
+    const fakeId = new mongoose.Types.ObjectId()
     const updatedData = {
       firstName: "Test",
       lastName: "Test",
@@ -173,10 +188,10 @@ describe('User API', () => {
       birthDate: "2000-01-01",
       phone: "00000000000",
       national_id: "11122233300"
-    };
+    }
 
-    const res = await request(app).put(`/users/${fakeId}`).send(updatedData);
+    const res = await request(app).put(`/users/${fakeId}`).send(updatedData)
     expect(res.statusCode).toBe(200)
     expect(res.body).toBeNull()
-  });
-});
+  })
+})

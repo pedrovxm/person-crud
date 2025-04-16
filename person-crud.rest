@@ -1,5 +1,5 @@
 ###POST my First POST
-POST http://localhost:3001/user
+POST http://localhost:3000/users
 Content-Type: application/json
 
 {
@@ -19,4 +19,33 @@ Content-Type: application/json
 
 
 ###GET
-GET http://localhost:3001/users
+GET http://localhost:3000/users
+
+
+
+###PUT
+PUT http://localhost:3001/users/67f856ef236c10e9543d57d8
+Content-Type: application/json
+
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "address": {
+    "street": "123 Main St",
+    "city": "Anytown",
+    "state": "NY",
+    "postalCode": "12345",
+    "country": "USA"
+  },
+  "birthDate": "1991-01-01T00:00:00.000Z",
+  "phone": "+1 (123) 456-7890",
+  "national_id": "12345678901"
+}
+
+
+###DELETE
+DELETE http://localhost:3001/users/67f856ef236c10e9543d57d8
+
+
+### GET LOGS
+GET http://localhost:3001/logs

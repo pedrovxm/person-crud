@@ -24,10 +24,16 @@ services:
       timeout: 5s
       retries: 5
 
+  redis:
+    image: redis:latest
+    restart: always
+    ports:
+      - 6379:6379
+
 
   backend:
     build: ./backend 
-    restart: on-failure
+    restart: always
     environment:
       - MONGO_URL=mongodb://admin:123@mongodb:27017
       - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
